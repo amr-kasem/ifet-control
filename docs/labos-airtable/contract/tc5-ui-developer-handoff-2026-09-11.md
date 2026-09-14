@@ -416,6 +416,20 @@ The operator's boolean `result` is **not** published as a scalar at all; it trav
 evidence is append-only until review, and cannot be added after it. Impact photographs attach to a *shot*;
 Forced Entry and ANSI photographs attach to the *attempt*.
 
+**Displaying one — `url`, added 2026-09-14.** `PhotoSchema` now carries
+`url`, a root-relative location under the API's `/uploads` mount — e.g.
+`/uploads/9f1c2e77-4a6b-4f10-9c33-2b7d5e8a1042.jpg`. Fetch it from the same origin as the API; nothing
+needs configuring.
+
+- **Use `url`. Do not build a path from `filename`.** `filename` is the operator's device filename — not
+  unique, not the name on disk. Two operators both send `IMG_0001.jpg`.
+- **It is on the read path too.** `PhotoSchema` is nested in `AttemptSchema`, so rebuild a gallery from
+  `GET /projects/{pid}/{manual,impact}-tests/{tid}/trials` → `photos[]`, not from the upload replies — a
+  page refresh loses those. Note `GET /test-results/{id}` is the *legacy* shape and carries no photographs
+  at all.
+- **There is no server path in the response, and there will not be.** It would be a filesystem path rather
+  than a URL, and it stops resolving the moment the deployment sets `LABOS_UPLOADS_DIR` to a bind mount.
+
 **Correction is not retest.** A retest is another go at the same test; a correction says the earlier record
 is wrong. Both create a new attempt; only one means "disregard the previous row". Its three `400`s: the
 original is still open (finish or abort it), the test already has an open attempt, or the attempt predates
