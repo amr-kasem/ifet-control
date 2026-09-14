@@ -15,7 +15,7 @@ Nothing in this repository is in more than one of these at a time. **Say which o
 | State | What it means | Where it is true |
 |---|---|---|
 | **TARGET CONTRACT** | what the system is specified to do | `contract/write-contract-v0.4.md` · `contract/field-register.csv` · the Airtable requirements document |
-| **IMPLEMENTED ON FEATURE BRANCH** | built, in `ifet-management` `feature/labos-airtable` @ `ea3464e` and `ifet-firmware` `feature/labos-firmware-p3` — **unmerged, and until pushed, local** | the code, `openapi.json` |
+| **IMPLEMENTED ON FEATURE BRANCH** | built, in `ifet-management` `feature/labos-airtable` and `ifet-firmware` `feature/labos-firmware-p3` — both pushed to `origin`, **both unmerged** | the code, `openapi.json` |
 | **VERIFIED IN TESTING** | proven on the real wire against the Airtable **Testing** base `app4oXS3Kd5IKWgJ7` | TA6 101/101 · TA7 64/64 · acceptance 60/60 · 433 tests + 108 subtests |
 | **DEPLOYED TO PRODUCTION** | running on the `management` node and the rigs | **none of this integration. Zero of it.** |
 | **CONTRACT COMPATIBLE** | a pre-existing production behaviour the release does not change | the deployed rig callback, the 25 deployed routes |
@@ -51,7 +51,7 @@ The LabOS *production node* runs none of this. Unrelated claims about unrelated 
 
 | | |
 |---|---|
-| `ifet-management` | `feature/labos-airtable` @ **`ea3464e`** — **local only**, unmerged, unpushed. Target Alembic head **`e2b9d4c70a15`** |
+| `ifet-management` | `feature/labos-airtable` @ **`beee546`** — pushed, **unmerged**. Target Alembic head **`e2b9d4c70a15`** |
 | `ifet-firmware` | `feature/labos-firmware-p3` — docs and evidence, the MF run-binding change, the simulation harness. **No rig code ships in this release** |
 | Surface | 69 route decorators (25 are deployed today); `app/airtable/` and `app/sync/` exist here and **nowhere on the node** |
 | Register / generated artifacts | **76 rows** (44 BASELINE · **19 APPLIED** · 4 CONDITIONAL · 5 OMITTED · 3 DEPRECATED · 1 PLANNED). `interface-schema.csv` 171 rows, change CSV 164 rows — both regenerate byte-identical |
@@ -64,7 +64,7 @@ The LabOS *production node* runs none of this. Unrelated claims about unrelated 
 |---|---|
 | **Airtable Testing** `app4oXS3Kd5IKWgJ7` | **164 fields.** All 19 additions present and correctly typed — **choices and precision asserted, not just types.** Fixture `IFET-FIXTURE-0001` present, 75 protocol sections, all 7 requirement codes |
 | Live probes | TA6 **101/101** · TA7 **64/64** · five-workflow acceptance **60/60** — production Airtable schema byte-identical before and after every run |
-| Local suites | **433 tests + 108 subtests green** on PostgreSQL 13. *Run per file: the whole suite in one pytest process exhausts `max_connections`, which is the harness, not a regression* |
+| Local suites | **439 tests + 108 subtests green** on PostgreSQL 13. *Run per file: the whole suite in one pytest process exhausts `max_connections`, which is the harness, not a regression* |
 | Gates | `check_register.py` PASS · `preflight.py` **"safe to send"** against both live bases · `openapi.json` current, gated by `TheCommittedApiContractIsCurrent` |
 
 ---
@@ -106,9 +106,10 @@ so does `b7c2e9a41d38`, the release's first migration. Two heads; `alembic upgra
 `startup.sh` makes that fatal, so `report-api` would never serve. **Runbook §1.2a.** Re-read the head first:
 every restart of the currently deployed stack mints another one.
 
-### 6.2 Push and merge
+### 6.2 Merge
 
-Both branches are local. `ifet-management` must reach `latest` before the window.
+Both branches are pushed to `origin` and **neither is merged**. `ifet-management` must reach
+`latest` before the window.
 
 ### 6.3 The DG14 gate changes operator-visible behaviour on the day
 

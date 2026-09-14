@@ -13,7 +13,7 @@ person, with the deployment owner informed.
 
 | | |
 |---|---|
-| `ifet-management` | branch `feature/labos-airtable`, **local only — must be pushed and merged into `latest` before the window** |
+| `ifet-management` | branch `feature/labos-airtable`, pushed to `origin` — **must be merged into `latest` before the window** |
 | `ifet-firmware` | branch `feature/labos-firmware-p3`, docs and evidence only; no rig code changes in this release |
 | Alembic head | **`e2b9d4c70a15`** (`requirement_source_verification`) |
 | Migrations to apply | **10**, **from the node's head — which is `7ed2a670841e`, not `3a65a83e0463`.** See §1.2a before §2 |
@@ -43,8 +43,8 @@ git -C ifet-firmware    status --porcelain          # must be empty
 git -C ifet-firmware    log -1 --format='%H %s'
 ```
 
-Both branches are **local only** at the time of writing. Pushing and merging into `latest` is a
-prerequisite, not part of the window.
+Both branches are pushed to `origin` and **neither is merged**. Merging `ifet-management` into `latest` is
+a prerequisite, not part of the window.
 
 ### 1.2 Database — where it actually is
 
