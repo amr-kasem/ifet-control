@@ -264,8 +264,8 @@ column is **absent**, not blank.
 |---|---|---|---|
 | **imported job: select the test** | `GET` | `/projects/{pid}/impact-tests/` | **the import already created it, with `impact_family` frozen — §0.1** |
 | **LabOS-only job: create it** | `POST` | `/projects/{pid}/impact-tests/` | `{}` is valid — everything optional |
-| set the operator's values | `PATCH` | `/projects/{pid}/impact-tests/{id}` | `{impact_level?, target_velocity?, impact_family?}` |
-| **start one impact** | `POST` | `/projects/{pid}/impact-tests/{id}/trials` | `{operator_name}` |
+| set the operator's values | `PATCH` | `/projects/{pid}/impact-tests/{id}` | `{impact_level?, target_velocity?, impact_family?}` — **the only `PATCH` in the app.** CORS omitted the method until 2026-09-14, so it worked under `curl` and was unreachable from every browser; `400 Disallowed CORS method` on the preflight means you are on an older build |
+| **start one impact** | `POST` | `/projects/{pid}/impact-tests/{id}/trials` | `{operator_name}` — **refused with `400` if the test has no `impact_family`**, see below |
 | record the impact | `POST` | `/test-results/{aid}/shots` | `{result, area?, velocity?, note?}` — `result` required |
 | photograph it | `POST` | `/shots/{sid}/photos` | multipart, once per photograph |
 | **finish this impact** | `PUT` | `/test-results/{aid}/finish` | — then review it, then loop back to "start one impact" |
@@ -306,6 +306,20 @@ they are `409`. The level is per *test*, not per impact.
 | `IMPACT_LMI` | a **required** D / E choice, and nothing else |
 | LabOS-only test | a family choice, **write-once** — fixed as soon as any attempt exists, aborted included |
 
+**⚠️ The family must be set before Start is offered — new 2026-09-14.** Starting an attempt on an impact
+test with no `impact_family` is now refused with `400`. It is the write-once rule read forwards: if the
+first attempt fixes the family, the first attempt has to have one to fix. Previously the start succeeded
+and stranded the test — the `PATCH` that would supply the family answered `409` because execution had
+begun, `/finish` answered `400` because there was no classification to record, and abort was the only way
+out, at the cost of the attempt.
+
+So on a LabOS-only test, **disable Start until a family is chosen** (and a level, for LMI). On an
+Airtable-bound test the importer has already frozen it, so a refusal there means the import did not run —
+the message says to re-run the requirement import rather than to pick one.
+
+A test already stranded by the old behaviour still answers a repeated Start with its **open attempt**
+rather than the `400`, because that attempt's id is what the operator needs in order to abort it.
+
 **Never a three-option picker on an Airtable-bound test.** The SMI/LMI half is Airtable's answer, frozen at
 import; offering it invites a contradiction the API rejects with `400`.
 
@@ -323,6 +337,7 @@ one impact and stays per shot, inside the JSON. Different fields, different mean
 
 | Code | When |
 |---|---|
+| `400` on **start** | the test has no `impact_family`. **New 2026-09-14** — set it before offering Start |
 | `400` on `PATCH` | `impact_family` on an Airtable-bound test; or any unexpected key is `422` |
 | `409` on `PATCH` | `impact_level` / `target_velocity` after an attempt has **completed** |
 | `400` on finish | no resolvable classification, or no `target_velocity`. **An abort needs neither** |

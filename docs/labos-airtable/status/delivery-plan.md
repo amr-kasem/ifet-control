@@ -31,7 +31,7 @@ probed; where they disagree with it, it wins. Full record:
 | **Airtable Production** `app0OCunbmuXl7Hc9` | **142 fields**, none of the 22 guarded fields present, never written by LabOS |
 | Register · generated CSVs | **76 rows** (44 BASELINE · **19 APPLIED** · 4 CONDITIONAL · 5 OMITTED · 3 DEPRECATED · 1 PLANNED). `interface-schema.csv` **171 rows** and the change CSV **164 rows**, both regenerated today and byte-identical |
 | Gates | `check_register.py` PASS · `preflight.py` "safe to send" against both live bases · **433 tests + 108 subtests green** on PostgreSQL 13 · `openapi.json` current · acceptance baseline **60/60** |
-| `ifet-management` | `feature/labos-airtable` @ **`ea3464e`** |
+| `ifet-management` | `feature/labos-airtable` @ **`beee546`** — pushed to `origin`, **unmerged** |
 
 **One new rollout limitation, and it is not a defect.** Rig Static Load and Cycles cannot publish a
 **terminal** until an operator is declared at run start — firmware has no `start_static_test` call at all
